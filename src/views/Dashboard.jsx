@@ -13,11 +13,8 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  Legend,
   LabelList,
 } from 'recharts';
-
-const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 const getRelativeTime = (dateString) => {
   if (!dateString) return '';
@@ -58,20 +55,23 @@ export const Dashboard = () => {
     ];
   }, [stats]);
 
-  const monthlyBirths = useMemo(() => {
+  const tipoPartoData = useMemo(() => {
     if (pariciones.length === 0) return [];
-    const grouped = {};
+    const counts = {};
     pariciones.forEach((p) => {
-      const date = new Date(p.fecha_parto);
-      if (isNaN(date.getTime())) return;
-      const key = `${date.getFullYear()}-${date.getMonth()}`;
-      if (!grouped[key]) {
-        grouped[key] = { mes: MONTH_NAMES[date.getMonth()], machos: 0, hembras: 0, sortKey: key };
-      }
-      if (p.sexo_cria === 'Macho') grouped[key].machos++;
-      else grouped[key].hembras++;
+      const tipo = p.observaciones || 'Sin dato';
+      counts[tipo] = (counts[tipo] || 0) + 1;
     });
-    return Object.values(grouped).sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+    const colorMap = {
+      'Parto Normal': '#10b981',
+      'Asistencia leve': '#f59e0b',
+      'Distocia': '#ef4444',
+    };
+    return Object.entries(counts).map(([name, value]) => ({
+      name,
+      value,
+      color: colorMap[name] || '#94a3b8',
+    }));
   }, [pariciones]);
 
   const activity = useMemo(() => {
@@ -219,40 +219,23 @@ export const Dashboard = () => {
         </Card>
 
         <Card className="flex flex-col bg-white shadow-sm ring-1 ring-slate-900/5 p-6">
-          <CardHeader title="Nacimientos por Mes" subtitle="Distribucion mensual por sexo" />
-          {monthlyBirths.length > 0 ? (
+          <CardHeader title="Tipo de Parto" subtitle="Distribucion por dificultad del parto" />
+          {tipoPartoData.length > 0 ? (
             <div className="h-72 mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyBirths} margin={{ top: 30, right: 20, bottom: 20, left: -20 }}>
-                  <defs>
-                    <linearGradient id="gradMacho" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
-                      <stop offset="100%" stopColor="#93c5fd" stopOpacity={0.8} />
-                    </linearGradient>
-                    <linearGradient id="gradHembra" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#ec4899" stopOpacity={1} />
-                      <stop offset="100%" stopColor="#f9a8d4" stopOpacity={0.8} />
-                    </linearGradient>
-                  </defs>
+                <BarChart data={tipoPartoData} margin={{ top: 30, right: 20, bottom: 20, left: -20 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }} dy={10} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} allowDecimals={false} />
                   <Tooltip
                     cursor={{ fill: '#f8fafc' }}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Legend
-                    verticalAlign="top"
-                    align="right"
-                    iconType="circle"
-                    iconSize={8}
-                    wrapperStyle={{ fontSize: '12px', fontWeight: 500, paddingBottom: '8px' }}
-                  />
-                  <Bar dataKey="machos" name="Machos" fill="url(#gradMacho)" radius={[6, 6, 0, 0]} maxBarSize={36}>
-                    <LabelList dataKey="machos" position="top" fill="#3b82f6" fontSize={11} fontWeight={600} />
-                  </Bar>
-                  <Bar dataKey="hembras" name="Hembras" fill="url(#gradHembra)" radius={[6, 6, 0, 0]} maxBarSize={36}>
-                    <LabelList dataKey="hembras" position="top" fill="#ec4899" fontSize={11} fontWeight={600} />
+                  <Bar dataKey="value" name="Cantidad" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                    {tipoPartoData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                    <LabelList dataKey="value" position="top" fill="#334155" fontSize={12} fontWeight={600} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
