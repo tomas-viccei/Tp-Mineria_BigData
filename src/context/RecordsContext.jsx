@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { api } from '../services/api';
 
 const RecordsContext = createContext(null);
@@ -9,9 +9,10 @@ export const RecordsProvider = ({ children }) => {
   const [proximosNacimientos, setProximosNacimientos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const hasLoaded = useRef(false);
 
   const fetchAll = useCallback(async () => {
-    setIsLoading(true);
+    if (!hasLoaded.current) setIsLoading(true);
     setError(null);
     try {
       const [tactosRes, paricionesRes, proximosRes] = await Promise.allSettled([
@@ -45,6 +46,7 @@ export const RecordsProvider = ({ children }) => {
       setError(err.message || 'Error al cargar los datos.');
     } finally {
       setIsLoading(false);
+      hasLoaded.current = true;
     }
   }, []);
 

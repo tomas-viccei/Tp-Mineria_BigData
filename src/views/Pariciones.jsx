@@ -96,7 +96,7 @@ export const Pariciones = () => {
       const response = await api.pariciones.create(payload);
       toast.success(response.mensaje || response.message || 'Paricion registrada con exito.');
       setFormData({ ...INITIAL_FORM, fecha_parto: new Date().toISOString().split('T')[0] });
-      refetch();
+      setTimeout(() => refetch(), 1500);
     } catch (error) {
       if (error.data?.detalles && Array.isArray(error.data.detalles)) {
         setBackendErrors(error.data.detalles);

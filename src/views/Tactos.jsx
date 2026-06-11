@@ -47,7 +47,7 @@ export const Tactos = () => {
       const response = await api.tactos.create(payload);
       toast.success(response.mensaje || response.message || 'Tacto registrado con exito.');
       setFormData({ ...INITIAL_FORM, fecha: new Date().toISOString().split('T')[0] });
-      refetch();
+      setTimeout(() => refetch(), 1500);
     } catch (error) {
       toast.error(error.message || 'Error al registrar el tacto.');
     } finally {
