@@ -7,7 +7,9 @@
       "Bash(curl -sf http://localhost:5173/tactos -o /dev/null)",
       "Bash(curl -sf http://localhost:5173/pariciones -o /dev/null)",
       "Bash(curl -sf http://localhost:5173/registros -o /dev/null)",
-      "Bash(open *)"
+      "Bash(open *)",
+      "Bash(npx vite *)",
+      "Bash(git *)"
     ]
   }
 }
