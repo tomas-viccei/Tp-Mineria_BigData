@@ -271,11 +271,11 @@ export const Dashboard = () => {
                 if (record.sexo_cria === 'Macho') {
                   bgClass = 'bg-blue-100 text-blue-600';
                   ringClass = 'ring-blue-50';
-                  badgeText = `Nacimiento Macho (${record.peso_nacer}kg)`;
+                  badgeText = `Nacimiento Macho${record.peso_nacer ? ` (${record.peso_nacer}kg)` : ''}`;
                 } else {
                   bgClass = 'bg-pink-100 text-pink-600';
                   ringClass = 'ring-pink-50';
-                  badgeText = `Nacimiento Hembra (${record.peso_nacer}kg)`;
+                  badgeText = `Nacimiento Hembra${record.peso_nacer ? ` (${record.peso_nacer}kg)` : ''}`;
                 }
               }
 
@@ -294,13 +294,13 @@ export const Dashboard = () => {
                             {badgeText}
                           </span>
                           <p className="font-semibold text-slate-800 text-sm">
-                            ID: {isTacto ? record.caravana : record.caravana_madre}
+                            ID: {(isTacto ? record.caravana : record.caravana_madre) || 'S/D'}
                           </p>
                         </div>
                         <p className="text-sm text-slate-500 mt-2">
                           {isTacto
                             ? record.resultado === 'Positivo'
-                              ? `Dias de gestacion: ${record.dias_gestacion}`
+                              ? `Dias de gestacion: ${record.dias_gestacion ?? 'S/D'}`
                               : 'Animal vacio. Requiere revision para proximo servicio.'
                             : `Observaciones: ${record.observaciones || 'Sin observaciones'}`}
                         </p>

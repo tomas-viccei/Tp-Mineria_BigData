@@ -3,6 +3,19 @@ import { api } from '../services/api';
 
 const RecordsContext = createContext(null);
 
+const normalizeKeys = (obj) => {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key.toLowerCase().replace(/\s+/g, '_'),
+      value,
+    ])
+  );
+};
+
+const normalizeList = (items) =>
+  Array.isArray(items) ? items.map(normalizeKeys) : [];
+
 export const RecordsProvider = ({ children }) => {
   const [tactos, setTactos] = useState([]);
   const [pariciones, setPariciones] = useState([]);
@@ -23,17 +36,20 @@ export const RecordsProvider = ({ children }) => {
 
       if (tactosRes.status === 'fulfilled') {
         const data = tactosRes.value;
-        setTactos(Array.isArray(data) ? data : (data.datos || data.data || []));
+        const items = Array.isArray(data) ? data : (data.datos || data.data || []);
+        setTactos(normalizeList(items));
       }
 
       if (paricionesRes.status === 'fulfilled') {
         const data = paricionesRes.value;
-        setPariciones(Array.isArray(data) ? data : (data.datos || data.data || []));
+        const items = Array.isArray(data) ? data : (data.datos || data.data || []);
+        setPariciones(normalizeList(items));
       }
 
       if (proximosRes.status === 'fulfilled') {
         const data = proximosRes.value;
-        setProximosNacimientos(Array.isArray(data) ? data : (data.datos || data.data || []));
+        const items = Array.isArray(data) ? data : (data.datos || data.data || []);
+        setProximosNacimientos(normalizeList(items));
       }
 
       const allRejected = [tactosRes, paricionesRes, proximosRes].every(

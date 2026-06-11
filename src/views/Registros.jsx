@@ -111,22 +111,28 @@ export const Registros = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 font-semibold text-slate-900">
-                        {isTacto ? record.caravana : `${record.caravana_madre} / ${record.caravana_cria}`}
+                        {isTacto
+                          ? record.caravana || 'S/D'
+                          : `${record.caravana_madre || 'S/D'} / ${record.caravana_cria || 'S/D'}`}
                       </td>
                       <td className="px-6 py-4 text-slate-500 whitespace-nowrap">
-                        {isTacto ? record.fecha : record.fecha_parto}
+                        {(isTacto ? record.fecha : record.fecha_parto) || 'S/D'}
                       </td>
                       <td className="px-6 py-4">
                         <Badge variant={getBadgeVariant(record)}>
-                          {isTacto ? record.resultado : record.sexo_cria}
+                          {(isTacto ? record.resultado : record.sexo_cria) || 'S/D'}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 text-slate-600">
                         {isTacto && record.resultado === 'Positivo' && (
-                          <span className="font-medium">{record.dias_gestacion} dias gest.</span>
+                          <span className="font-medium">{record.dias_gestacion ?? 'S/D'} dias gest.</span>
                         )}
-                        {isTacto && record.resultado === 'Negativo' && <span className="text-slate-400">N/A</span>}
-                        {!isTacto && <span className="font-medium">{record.peso_nacer} kg al nacer</span>}
+                        {isTacto && record.resultado !== 'Positivo' && <span className="text-slate-400">N/A</span>}
+                        {!isTacto && (
+                          <span className="font-medium">
+                            {record.peso_nacer ? `${record.peso_nacer} kg` : 'S/D'} — {record.observaciones || 'Sin obs.'}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );
