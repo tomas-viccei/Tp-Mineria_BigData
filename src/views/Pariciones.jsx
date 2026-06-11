@@ -208,17 +208,18 @@ export const Pariciones = () => {
               />
             </div>
 
-            <div className="pt-2">
-              <label htmlFor="observaciones" className="block mb-1 text-sm font-medium text-slate-700">
-                Observaciones del Parto
-              </label>
-              <textarea
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Select
                 id="observaciones"
-                rows={4}
-                className="w-full px-3 py-3 text-slate-900 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow text-sm shadow-sm"
+                label="Observaciones del Parto"
+                required
                 value={formData.observaciones}
                 onChange={handleChange}
-                placeholder="Ej: Parto normal, sin asistencia veterinaria."
+                options={[
+                  { value: 'Parto Normal', label: 'Parto Normal' },
+                  { value: 'Asistencia leve', label: 'Asistencia leve' },
+                  { value: 'Distocia', label: 'Distocia' },
+                ]}
               />
             </div>
 
