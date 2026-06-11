@@ -1,7 +1,10 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5678/webhook/';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5678/webhook';
 
 const fetchApi = async (endpoint, options = {}) => {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  // Correccion: Se garantiza la barra divisoria entre la URL base y el endpoint
+  const url = `${API_BASE_URL.replace(/\/+$/, '')}/${endpoint}`;
+
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
